@@ -56,27 +56,26 @@ func buildPhoneMetadataFromElement(document *PhoneNumberMetadataE, liteBuild boo
 // represented by that country code. In the case of multiple countries sharing a calling code,
 // such as the NANPA countries, the one indicated with "isMainCountryForCode" in the metadata
 // should be first.
-func BuildCountryCodeToRegionMap(metadataCollection *PhoneMetadataCollection) map[int][]string {
-	countryCodeToRegionCodeMap := make(map[int][]string)
+func BuildCountryCodeToRegionMap(metadataCollection *PhoneMetadataCollection) map[int32][]string {
+	countryCodeToRegionCodeMap := make(map[int32][]string)
 	for _, metadata := range metadataCollection.Metadata {
 		regionCode := metadata.GetId()
-		countryCode := int(metadata.GetCountryCode())
-		_, present := countryCodeToRegionCodeMap[countryCode]
+		_, present := countryCodeToRegionCodeMap[metadata.GetCountryCode()]
 		if present {
-			phoneList := countryCodeToRegionCodeMap[countryCode]
+			phoneList := countryCodeToRegionCodeMap[metadata.GetCountryCode()]
 			if metadata.GetMainCountryForCode() {
 				phoneList = append([]string{regionCode}, phoneList...)
 			} else {
 				phoneList = append(phoneList, regionCode)
 			}
-			countryCodeToRegionCodeMap[countryCode] = phoneList
+			countryCodeToRegionCodeMap[metadata.GetCountryCode()] = phoneList
 		} else {
 			// For most countries, there will be only one region code for the country calling code.
 			phoneList := []string{}
 			if regionCode != "" { // For alternate formats, there are no region codes at all.
 				phoneList = append(phoneList, regionCode)
 			}
-			countryCodeToRegionCodeMap[countryCode] = phoneList
+			countryCodeToRegionCodeMap[metadata.GetCountryCode()] = phoneList
 		}
 	}
 	return countryCodeToRegionCodeMap
@@ -156,7 +155,7 @@ func loadInternationalFormat(metadata *PhoneMetadata, numberFormatElement *Numbe
 	hasExplicitIntlFormatDefined := false
 
 	if len(intlFormatPattern) > 1 {
-		panic(fmt.Sprintf("Invalid number of intlFormat patterns for country: %s", metadata.GetId()))
+		panic("Invalid number of intlFormat patterns for country: " + metadata.GetId())
 
 	} else if len(intlFormatPattern) == 0 {
 		// Default to use the same as the national pattern if none is defined.
@@ -306,20 +305,22 @@ func parsePossibleLengthStringToSet(possibleLengthString string) map[int32]bool 
 			if len(minMax) != 2 {
 				panic(fmt.Sprintf("Ranges must have exactly one - character: missing for %s.", possibleLengthString))
 			}
-			min, _ := strconv.Atoi(minMax[0])
-			max, _ := strconv.Atoi(minMax[1])
+			tmp1, _ := strconv.ParseInt(minMax[0], 10, 32)
+			tmp2, _ := strconv.ParseInt(minMax[1], 10, 32)
+			min1 := int32(tmp1)
+			max1 := int32(tmp2)
 
 			// We don't even accept [6-7] since we prefer the shorter 6,7 variant; for a range to be in
 			// use the hyphen needs to replace at least one digit.
-			if max-min < 2 {
+			if max1-min1 < 2 {
 				panic(fmt.Sprintf("The first number in a range should be two or more digits lower than the second. Culprit possibleLength string: %s", possibleLengthString))
 			}
 
-			for j := min; j <= max; j++ {
-				lengthSet[int32(j)] = true
+			for j := min1; j <= max1; j++ {
+				lengthSet[j] = true
 			}
 		} else {
-			length, _ := strconv.Atoi(lengthSubstring)
+			length, _ := strconv.ParseInt(lengthSubstring, 10, 32)
 			lengthSet[int32(length)] = true
 		}
 	}

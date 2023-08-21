@@ -139,7 +139,7 @@ func buildTimezones() {
 	body := fetchURL(tzURL)
 
 	// build our map of prefix to timezones
-	prefixMap := make(map[int][]string)
+	prefixMap := make(map[int32][]string)
 	for _, line := range strings.Split(string(body), "\n") {
 		if strings.HasPrefix(line, "#") {
 			continue
@@ -160,25 +160,25 @@ func buildTimezones() {
 		}
 
 		// parse our prefix
-		prefix, err := strconv.Atoi(fields[0])
+		prefix, err := strconv.ParseInt(fields[0], 10, 32)
 		if err != nil {
 			log.Fatalf("Invalid prefix in line: %s", line)
 		}
-		prefixMap[prefix] = zones
+		prefixMap[int32(prefix)] = zones
 	}
 
 	// then write our file
 	writeIntStringArrayMap(tzPath, tzVar, prefixMap)
 }
 
-func writeIntStringArrayMap(path string, varName string, prefixMap map[int][]string) {
+func writeIntStringArrayMap(path string, varName string, prefixMap map[int32][]string) {
 	// build lists of our keys and values
 	keys := make([]int, 0, len(prefixMap))
 	values := make([]string, 0, 255)
 	seenValues := make(map[string]bool, 255)
 
 	for k, vs := range prefixMap {
-		keys = append(keys, k)
+		keys = append(keys, int(k))
 		for _, v := range vs {
 			_, seen := seenValues[v]
 			if !seen {
@@ -224,7 +224,7 @@ func writeIntStringArrayMap(path string, varName string, prefixMap map[int][]str
 		}
 
 		// then our values
-		values := prefixMap[key]
+		values := prefixMap[int32(key)]
 
 		// write our number of values
 		if err := binary.Write(data, binary.LittleEndian, uint8(len(values))); err != nil {
@@ -309,7 +309,7 @@ func generateBinFile(variableName string, data []byte) []byte {
 }
 
 func buildPrefixData(build *prefixBuild) {
-	log.Printf("Fetching %s from Github\n", build.url)
+	log.Println("Fetching " + build.url + " from Github")
 	svnExport(build.dir, build.url)
 
 	// get our top level language directories
@@ -319,7 +319,7 @@ func buildPrefixData(build *prefixBuild) {
 	}
 
 	// for each directory
-	languageMappings := make(map[string]map[int]string)
+	languageMappings := make(map[string]map[int32]string)
 	for _, dir := range dirs {
 		// only look at directories
 		fi, _ := os.Stat(dir)
@@ -348,7 +348,7 @@ func buildPrefixData(build *prefixBuild) {
 		seenValues := make(map[string]bool)
 		values := make([]string, 0, 255)
 		for prefix, value := range mappings {
-			prefixes = append(prefixes, prefix)
+			prefixes = append(prefixes, int(prefix))
 			_, seen := seenValues[value]
 			if !seen {
 				values = append(values, value)
@@ -395,7 +395,7 @@ func buildPrefixData(build *prefixBuild) {
 		last := 0
 		intBuf := make([]byte, 6)
 		for _, prefix := range prefixes {
-			value := mappings[prefix]
+			value := mappings[int32(prefix)]
 			valueIntern := internMappings[value]
 			diff := prefix - last
 			l := binary.PutUvarint(intBuf, uint64(diff))
@@ -425,11 +425,11 @@ func buildPrefixData(build *prefixBuild) {
 	writeFile(build.srcPath, output.Bytes())
 }
 
-func readMappingsForDir(dir string) map[int]string {
+func readMappingsForDir(dir string) map[int32]string {
 	log.Printf("Building map for: %s\n", dir)
-	mappings := make(map[int]string)
+	mappings := make(map[int32]string)
 
-	files, err := filepath.Glob(fmt.Sprintf("%s/*.txt", dir))
+	files, err := filepath.Glob(dir + "/*.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -455,7 +455,8 @@ func readMappingsForDir(dir string) map[int]string {
 				continue
 			}
 			prefix := fields[0]
-			prefixInt, err := strconv.Atoi(prefix)
+			tmp1, err := strconv.ParseInt(prefix, 10, 32)
+			prefixInt := int32(tmp1)
 			if err != nil || prefixInt < 0 {
 				log.Fatalf("Unable to parse line: %s", line)
 			}

@@ -1,7 +1,6 @@
 package phonenumbers
 
 import (
-	"fmt"
 	"regexp"
 	"strconv"
 	"strings"
@@ -95,7 +94,7 @@ func ContainsMoreThanOneSlashInNationalNumber(
 	// If the first slash is after the country calling code, this is permitted.
 	var candidateHasCountryCode = (number.GetCountryCodeSource() == PhoneNumber_FROM_NUMBER_WITH_PLUS_SIGN ||
 		number.GetCountryCodeSource() == PhoneNumber_FROM_NUMBER_WITHOUT_PLUS_SIGN)
-	cc := strconv.Itoa(int(number.GetCountryCode()))
+	cc := strconv.FormatInt(int64(number.GetCountryCode()), 10)
 	if candidateHasCountryCode &&
 		NormalizeDigitsOnly(candidate[0:firstSlash]) == cc {
 		// Any more slashes and this is illegal.
@@ -120,7 +119,7 @@ func AllNumberGroupsRemainGrouped(
 	var fromIndex = 0
 	if number.GetCountryCodeSource() != PhoneNumber_FROM_DEFAULT_COUNTRY {
 		// First skip the country code if the normalized candidate contained it.
-		var cc = strconv.Itoa(int(number.GetCountryCode()))
+		var cc = strconv.FormatInt(int64(number.GetCountryCode()), 10)
 		fromIndex = strings.Index(normalizedCandidate, cc) + len(cc)
 	}
 	// Check each group of consecutive digits are not broken into
@@ -220,7 +219,7 @@ func match(number string, pattern *regexp.Regexp, allowPrefixMatch bool) bool {
 	if len(ind) == 0 || ind[0] != 0 {
 		return false
 	}
-	patP := fmt.Sprintf(`^(?:%s)$`, pattern.String()) // Strictly match
+	patP := `^(?:` + pattern.String() + `)$` // Strictly match
 	pat := regexFor(patP)
 	return pat.MatchString(number) || allowPrefixMatch
 }

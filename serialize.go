@@ -13,7 +13,7 @@ import (
 // intStringMap is our data structure for maps from prefixes to a single string
 // this is used for our carrier and geocoding maps
 type intStringMap struct {
-	Map       map[int]string
+	Map       map[int32]string
 	MaxLength int
 }
 
@@ -48,8 +48,8 @@ func loadPrefixMap(data string) (*intStringMap, error) {
 	}
 
 	maxLength := 0
-	mappings := make(map[int]string, mappingCount)
-	prefix := 0
+	mappings := make(map[int32]string, mappingCount)
+	var prefix int32 = 0
 	for i := 0; i < int(mappingCount); i++ {
 		// first read our diff
 		diff, err := binary.ReadUvarint(reader)
@@ -57,7 +57,7 @@ func loadPrefixMap(data string) (*intStringMap, error) {
 			return nil, err
 		}
 
-		prefix += int(diff)
+		prefix += int32(diff)
 
 		// then our map
 		var valueIntern uint16

@@ -1297,7 +1297,7 @@ func TestGetCarrierWithPrefixForNumber(t *testing.T) {
 		num             string
 		lang            string
 		expectedCarrier string
-		expectedPrefix  int
+		expectedPrefix  int32
 	}{
 		{num: "+8613702032331", lang: "en", expectedCarrier: "China Mobile", expectedPrefix: 86137},
 		{num: "+8613702032331", lang: "zh", expectedCarrier: "中国移动", expectedPrefix: 86137},

@@ -1,7 +1,6 @@
 package phonenumbers
 
 import (
-	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -41,7 +40,7 @@ var (
 	//   <li>No whitespace is allowed at the start or end.
 	//   <li>No alpha digits (vanity numbers such as 1-800-SIX-FLAGS) are currently supported.
 	// </ul>
-	PATTERN = regexp.MustCompile(fmt.Sprintf("(?i)(?:\\+){0,1}(?:%s%s)%s%s(?:%s%s)%s(?:%s)?", LEAD_CLASS, PUNCTUATION, LEAD_LIMIT, DIGIT_SEQUENCE, PUNCTUATION, DIGIT_SEQUENCE, BLOCK_LIMIT, EXTN_PATTERNS_FOR_MATCHING))
+	PATTERN = regexp.MustCompile("(?i)(?:\\+){0,1}(?:" + LEAD_CLASS + PUNCTUATION + ")" + LEAD_LIMIT + DIGIT_SEQUENCE + "(?:" + PUNCTUATION + DIGIT_SEQUENCE + ")" + BLOCK_LIMIT + "(?:" + EXTN_PATTERNS_FOR_MATCHING + ")?")
 
 	//  Matches strings that look like publication pages. Example:
 	//  <pre>Computing Complete Answers to Queries in the Presence of Limited Access Patterns.
@@ -63,7 +62,7 @@ var (
 	// An opening bracket at the beginning may not be closed, but subsequent ones should be.  It's
 	// also possible that the leading bracket was dropped, so we shouldn't be surprised if we see a
 	// closing bracket first. We limit the sets of brackets in a phone number to four.
-	MATCHING_BRACKETS = regexp.MustCompile("(?:[" + OPENING_PARENS + "])?" + "(?:" + NON_PARENS + "+" + "[" + CLOSING_PARENS + "])?" + NON_PARENS + "+" + "(?:[" + OPENING_PARENS + "]" + NON_PARENS + "+[" + CLOSING_PARENS + "])" + BRACKET_PAIR_LIMIT + NON_PARENS + "*")
+	MATCHING_BRACKETS = regexp.MustCompile("(?:[" + OPENING_PARENS + "])?(?:" + NON_PARENS + "+[" + CLOSING_PARENS + "])?" + NON_PARENS + "+(?:[" + OPENING_PARENS + "]" + NON_PARENS + "+[" + CLOSING_PARENS + "])" + BRACKET_PAIR_LIMIT + NON_PARENS + "*")
 
 	// Patterns used to extract phone numbers from a larger phone-number-like pattern. These are
 	// ordered according to specificity. For example, white-space is last since that is frequently
