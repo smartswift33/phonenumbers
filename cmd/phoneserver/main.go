@@ -59,8 +59,8 @@ func parse(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespons
 	}
 
 	return writeResponse(http.StatusOK, successResponse{
-		NationalNumber:         *metadata.NationalNumber,
-		CountryCode:            *metadata.CountryCode,
+		NationalNumber:         metadata.NationalNumber,
+		CountryCode:            metadata.CountryCode,
 		IsPossible:             phonenumbers.IsPossibleNumber(metadata),
 		IsValid:                phonenumbers.IsValidNumber(metadata),
 		NationalFormatted:      phonenumbers.Format(metadata, phonenumbers.NATIONAL),

@@ -25,7 +25,7 @@ func main() {
 	}
 	fmt.Printf("            E164: %s\n", phonenumbers.Format(num, phonenumbers.E164))
 	fmt.Printf("National Dialing: %s\n", phonenumbers.Format(num, phonenumbers.NATIONAL))
-	fmt.Printf("        National: %d\n", *num.NationalNumber)
+	fmt.Printf("        National: %d\n", num.NationalNumber)
 	fmt.Printf("         IsValid: %s\n", strconv.FormatBool(phonenumbers.IsValidNumber(metadata)))
 
 }

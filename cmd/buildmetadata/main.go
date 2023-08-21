@@ -20,8 +20,8 @@ import (
 
 	"bytes"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/nyaruka/phonenumbers"
+	"google.golang.org/protobuf/proto"
 )
 
 type prefixBuild struct {
@@ -309,7 +309,7 @@ func generateBinFile(variableName string, data []byte) []byte {
 }
 
 func buildPrefixData(build *prefixBuild) {
-	log.Println("Fetching " + build.url + " from Github")
+	log.Printf("Fetching %s from Github\n", build.url)
 	svnExport(build.dir, build.url)
 
 	// get our top level language directories
@@ -429,7 +429,7 @@ func readMappingsForDir(dir string) map[int]string {
 	log.Printf("Building map for: %s\n", dir)
 	mappings := make(map[int]string)
 
-	files, err := filepath.Glob(dir + "/*.txt")
+	files, err := filepath.Glob(fmt.Sprintf("%s/*.txt", dir))
 	if err != nil {
 		log.Fatal(err)
 	}

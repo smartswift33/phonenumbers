@@ -19,10 +19,12 @@
 // resources/PhoneNumberMetadata.xml.
 // @author Shaopeng Jia
 
-syntax = "proto2";
+syntax = "proto3";
 
-option java_package = "com.google.i18n.phonenumbers";
 package phonenumbers;
+
+option go_package = "./phonenumbers";
+option java_package = "com.google.i18n.phonenumbers";
 
 message NumberFormat {
   // pattern is a regex that is used to match the national (significant)
@@ -30,7 +32,7 @@ message NumberFormat {
   // "2070313000", which is the national (significant) number for Google London.
   // Note the presence of the parentheses, which are capturing groups what
   // specifies the grouping of numbers.
-  required string pattern = 1;
+  string pattern = 1;
 
   // format specifies how the national (significant) number matched by
   // pattern should be formatted.
@@ -38,7 +40,7 @@ message NumberFormat {
   // meaning that the number should be formatted as "20 7031 3000".
   // Each $x are replaced by the numbers captured by group x in the
   // regex specified by pattern.
-  required string format = 2;
+  string format = 2;
 
   // This field is a regex that is used to match a certain number of digits
   // at the beginning of the national (significant) number. When the match is
@@ -82,7 +84,7 @@ message NumberFormat {
   // inherited from the value set for the territory in the XML file, unless a
   // national_prefix_optional_when_formatting is defined specifically for this
   // NumberFormat.
-  optional bool national_prefix_optional_when_formatting = 6 [default=false];
+  optional bool national_prefix_optional_when_formatting = 6;
 
   // This field specifies how any carrier code ($CC) together with the first
   // group ($FG) in the national significant number should be formatted
@@ -165,7 +167,7 @@ message PhoneMetadata {
   // Universal International Toll Free Number (+800). These are all given the ID
   // "001", since this is the numeric region code for the world according to UN
   // M.49: http://en.wikipedia.org/wiki/UN_M.49
-  required string id = 9;
+  string id = 9;
 
   // The country calling code that one would dial from overseas when trying to
   // dial a phone number in this country. For example, this would be "64" for
@@ -225,7 +227,7 @@ message PhoneMetadata {
   // Specifies whether the mobile and fixed-line patterns are the same or not.
   // This is used to speed up determining phone number type in countries where
   // these two types of phone numbers can never be distinguished.
-  optional bool same_mobile_and_fixed_line_pattern = 18 [default=false];
+  optional bool same_mobile_and_fixed_line_pattern = 18;
 
   // Note that the number format here is used for formatting only, not parsing.
   // Hence all the varied ways a user *may* write a number need not be recorded
@@ -267,7 +269,7 @@ message PhoneMetadata {
   // calling code. This can be used to indicate that "GB" is the main country
   // for the calling code "44" for example, rather than Jersey or the Isle of
   // Man.
-  optional bool main_country_for_code = 22 [default=false];
+  optional bool main_country_for_code = 22;
 
   // This field is populated only for countries or regions that share a country
   // calling code. If a number matches this pattern, it could belong to this
@@ -283,13 +285,13 @@ message PhoneMetadata {
 
   // Deprecated: do not use. Will be deletd when there are no references to this
   // later.
-  optional bool leading_zero_possible = 26 [default=false];
+  optional bool leading_zero_possible = 26;
 
   // This field is set when this country has implemented mobile number
   // portability. This means that transferring mobile numbers between carriers
   // is allowed. A consequence of this is that phone prefix to carrier mapping
   // is less reliable.
-  optional bool mobile_number_portable_region = 32 [default=false];
+  optional bool mobile_number_portable_region = 32;
 }
 
 message PhoneMetadataCollection {

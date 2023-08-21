@@ -1,7 +1,7 @@
 package phonenumbers
 
 import (
-	proto "github.com/golang/protobuf/proto"
+	proto "google.golang.org/protobuf/proto"
 )
 
 var (
@@ -74,7 +74,7 @@ func loadShortNumberMetadataFromFile() error {
 // lenient check than #isValidShortNumber.
 // See IsPossibleShortNumberForRegion(PhoneNumber, string) for details.
 func IsPossibleShortNumber(number *PhoneNumber) bool {
-	regionsCodes := GetRegionCodesForCountryCode(int(number.GetCountryCode()))
+	regionsCodes := GetRegionCodesForCountryCode(number.GetCountryCode())
 	shortNumberLength := len(GetNationalSignificantNumber(number))
 	for _, region := range regionsCodes {
 		phoneMetadata := getShortNumberMetadataForRegion(region)
@@ -107,7 +107,7 @@ func IsPossibleShortNumberForRegion(number *PhoneNumber, regionDialingFrom strin
 // the number is actually in use, which is impossible to tell by just looking at the number
 // itself. See IsValidShortNumberForRegion(PhoneNumber, String) for details.
 func IsValidShortNumber(number *PhoneNumber) bool {
-	regionCodes := GetRegionCodesForCountryCode(int(number.GetCountryCode()))
+	regionCodes := GetRegionCodesForCountryCode(number.GetCountryCode())
 	regionCode := getRegionCodeForShortNumberFromRegionList(number, regionCodes)
 	if len(regionCodes) > 1 && regionCode != "" {
 		// If a matching region had been found for the phone number from among two or more regions,
@@ -162,7 +162,7 @@ func getRegionCodeForShortNumberFromRegionList(number *PhoneNumber, regionCodes 
 // Helper method to check that the country calling code of the number matches the region it's
 // being dialed from.
 func regionDialingFromMatchesNumber(number *PhoneNumber, regionDialingFrom string) bool {
-	regionCodes := GetRegionCodesForCountryCode(int(number.GetCountryCode()))
+	regionCodes := GetRegionCodesForCountryCode(number.GetCountryCode())
 	for _, region := range regionCodes {
 		if region == regionDialingFrom {
 			return true

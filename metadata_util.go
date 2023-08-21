@@ -2,10 +2,10 @@ package phonenumbers
 
 // merge merges two number formats
 func (nf *NumberFormat) merge(other *NumberFormat) {
-	if other.Pattern != nil {
+	if len(other.Pattern) > 0 {
 		nf.Pattern = other.Pattern
 	}
-	if other.Format != nil {
+	if len(other.Format) > 0 {
 		nf.Format = other.Format
 	}
 	for i := 0; i < len(other.LeadingDigitsPattern); i++ {

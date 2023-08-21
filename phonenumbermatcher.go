@@ -1,6 +1,7 @@
 package phonenumbers
 
 import (
+	"fmt"
 	"io"
 	"regexp"
 	"strconv"
@@ -9,7 +10,7 @@ import (
 
 // A stateful class that finds and extracts telephone numbers fom text.
 //
-// Vanity numbers (phone numbers using alphabetic digits such as '1-800-SIX-FLAGS' are not found.
+// Vanity numbers (phone numbers using alphabetic digits such as '1-800-SIX-FLAGS') are not found.
 type PhoneNumberMatcher struct {
 	text            string
 	preferredRegion string
@@ -40,7 +41,7 @@ var (
 	//   <li>No whitespace is allowed at the start or end.
 	//   <li>No alpha digits (vanity numbers such as 1-800-SIX-FLAGS) are currently supported.
 	// </ul>
-	PATTERN = regexp.MustCompile("(?i)(?:\\+){0,1}(?:" + LEAD_CLASS + PUNCTUATION + ")" + LEAD_LIMIT + DIGIT_SEQUENCE + "(?:" + PUNCTUATION + DIGIT_SEQUENCE + ")" + BLOCK_LIMIT + "(?:" + EXTN_PATTERNS_FOR_MATCHING + ")?")
+	PATTERN = regexp.MustCompile(fmt.Sprintf("(?i)(?:\\+){0,1}(?:%s%s)%s%s(?:%s%s)%s(?:%s)?", LEAD_CLASS, PUNCTUATION, LEAD_LIMIT, DIGIT_SEQUENCE, PUNCTUATION, DIGIT_SEQUENCE, BLOCK_LIMIT, EXTN_PATTERNS_FOR_MATCHING))
 
 	//  Matches strings that look like publication pages. Example:
 	//  <pre>Computing Complete Answers to Queries in the Presence of Limited Access Patterns.
@@ -130,9 +131,10 @@ var (
 // Arguments:
 // text -- The character sequence that we will search
 // country -- The country to assume for phone numbers not written in
-//            international format (with a leading plus, or with the
-//            international dialing prefix of the specified region). May be
-//            "ZZ" if only numbers with a leading plus should be considered.
+//
+//	international format (with a leading plus, or with the
+//	international dialing prefix of the specified region). May be
+//	"ZZ" if only numbers with a leading plus should be considered.
 func NewPhoneNumberMatcher(text string, region string) PhoneNumberMatcher {
 	m := PhoneNumberMatcher{
 		text:            text,
@@ -224,13 +226,13 @@ func (p *PhoneNumberMatcher) parseAndVerify(candidate string, offset int) (*Phon
 
 // Attempts to extract a match from a candidate string.
 //
-//  Arguments:
+//	Arguments:
 //
-//  candidate -- The candidate text that might contain a phone number.
+//	candidate -- The candidate text that might contain a phone number.
 //
-//  offset -- The offset of candidate within self.text
+//	offset -- The offset of candidate within self.text
 //
-//  Returns the match found, None if none can be found
+//	Returns the match found, None if none can be found
 func (p *PhoneNumberMatcher) extractMatch(candidate string, offset int) *PhoneNumberMatch {
 	// Skip a match that is more likely a publication page reference or a
 	// date.
@@ -260,13 +262,13 @@ func (p *PhoneNumberMatcher) extractMatch(candidate string, offset int) *PhoneNu
 // Attempts to extract a match from candidate if the whole candidate
 // does not qualify as a match.
 //
-//  Arguments:
+//	Arguments:
 //
-//  candidate -- The candidate text that might contain a phone number
+//	candidate -- The candidate text that might contain a phone number
 //
-//  offset -- The current offset of candidate within text
+//	offset -- The current offset of candidate within text
 //
-//  Returns the match found, None if none can be found
+//	Returns the match found, None if none can be found
 func (p *PhoneNumberMatcher) extractInnerMatch(candidate string, offset int) *PhoneNumberMatch {
 	for _, possibleInnerMatch := range INNER_MATCHES {
 		groupMatch := possibleInnerMatch.FindStringIndex(candidate)

@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"testing"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestParse(t *testing.T) {
@@ -252,7 +252,7 @@ func TestIsPossibleNumberWithReason(t *testing.T) {
 
 func TestTruncateTooLongNumber(t *testing.T) {
 	var tests = []struct {
-		country int
+		country int32
 		input   uint64
 		res     bool
 		output  uint64
@@ -264,12 +264,12 @@ func TestTruncateTooLongNumber(t *testing.T) {
 
 	for _, tc := range tests {
 		num := &PhoneNumber{}
-		num.CountryCode = proto.Int(tc.country)
-		num.NationalNumber = proto.Uint64(tc.input)
+		num.CountryCode = tc.country
+		num.NationalNumber = tc.input
 		res := TruncateTooLongNumber(num)
 
 		assert.Equal(t, tc.res, res, "res mismatch for input %d", tc.input)
-		assert.Equal(t, tc.output, *num.NationalNumber, "output mismatch for input %d", tc.input)
+		assert.Equal(t, tc.output, num.NationalNumber, "output mismatch for input %d", tc.input)
 	}
 }
 
@@ -340,8 +340,8 @@ func TestFormatByPattern(t *testing.T) {
 			format: E164,
 			userFormats: []*NumberFormat{
 				{
-					Pattern: s(`(\d+)`),
-					Format:  s(`$1`),
+					Pattern: `(\d+)`,
+					Format:  `$1`,
 				},
 			},
 			exp: "+33122334455",
@@ -351,8 +351,8 @@ func TestFormatByPattern(t *testing.T) {
 			format: NATIONAL,
 			userFormats: []*NumberFormat{
 				{
-					Pattern: s(`(20)(\d{4})(\d{4})`),
-					Format:  s(`$1 $2 $3`),
+					Pattern: `(20)(\d{4})(\d{4})`,
+					Format:  `$1 $2 $3`,
 				},
 			},
 			exp: "20 7031 3000",
@@ -699,10 +699,10 @@ var testPhoneNumbers = map[string]*PhoneNumber{
 	"UNKNOWN_COUNTRY_CODE_NO_RAW_INPUT": newPhoneNumber(2, 12345),
 }
 
-func newPhoneNumber(cc int, natNum uint64) *PhoneNumber {
+func newPhoneNumber(cc int32, natNum uint64) *PhoneNumber {
 	p := &PhoneNumber{}
-	p.CountryCode = proto.Int(cc)
-	p.NationalNumber = proto.Uint64(natNum)
+	p.CountryCode = cc
+	p.NationalNumber = natNum
 	return p
 }
 
@@ -1488,7 +1488,7 @@ func TestMaybeSeparateExtensionFromPhone(t *testing.T) {
 
 func TestGetSupportedCallingCodes(t *testing.T) {
 	var tests = []struct {
-		code    int
+		code    int32
 		present bool
 	}{
 		{
@@ -1593,8 +1593,8 @@ func TestRegexCacheRead(t *testing.T) {
 func TestRegexCacheStrict(t *testing.T) {
 	const expectedResult = "(41) 3020-3445"
 	phoneToTest := &PhoneNumber{
-		CountryCode:    proto.Int32(55),
-		NationalNumber: proto.Uint64(4130203445),
+		CountryCode:    55,
+		NationalNumber: 4130203445,
 	}
 	firstRunResult := Format(phoneToTest, NATIONAL)
 	if expectedResult != firstRunResult {
@@ -1603,8 +1603,8 @@ func TestRegexCacheStrict(t *testing.T) {
 	// This adds value to the regex cache that would break the following lookup if the regex-s
 	// in cache were not strict.
 	Format(&PhoneNumber{
-		CountryCode:    proto.Int32(973),
-		NationalNumber: proto.Uint64(17112724),
+		CountryCode:    973,
+		NationalNumber: 17112724,
 	}, NATIONAL)
 	secondRunResult := Format(phoneToTest, NATIONAL)
 

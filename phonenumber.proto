@@ -17,17 +17,18 @@
 // Definition of protocol buffer for representing international telephone numbers.
 // @author Shaopeng Jia
 
-syntax = "proto2";
-
-option java_package = "com.google.i18n.phonenumbers";
+syntax = "proto3";
 
 package phonenumbers;
+
+option go_package = "./phonenumbers";
+option java_package = "com.google.i18n.phonenumbers";
 
 message PhoneNumber {
   // The country calling code for this number, as defined by the International
   // Telecommunication Union (ITU). For example, this would be 1 for NANPA
   // countries, and 33 for France.
-  required int32 country_code = 1;
+  int32 country_code = 1;
 
   // The National (significant) Number, as defined in International
   // Telecommunication Union (ITU) Recommendation E.164, without any leading
@@ -43,7 +44,7 @@ message PhoneNumber {
   // Note that the National (significant) Number does not contain the National
   // (trunk) prefix. Obviously, as a uint64, it will never contain any
   // formatting (hyphens, spaces, parentheses), nor any alphanumeric spellings.
-  required uint64 national_number = 2;
+  uint64 national_number = 2;
 
   // Extension is not standardized in ITU recommendations, except for being
   // defined as a series of numbers with a maximum length of 40 digits. It is
@@ -70,7 +71,7 @@ message PhoneNumber {
   // Clients who use the parsing functionality of the i18n phone
   // number libraries will have these fields set if necessary automatically.
   optional bool italian_leading_zero = 4;
-  optional int32 number_of_leading_zeros = 8 [ default = 1 ];
+  optional int32 number_of_leading_zeros = 8;
 
   // The next few fields are non-essential fields for a phone number. They
   // retain extra information about the form the phone number was in when it was

@@ -12,11 +12,11 @@ import (
  */
 
 func TestIsPossibleShortNumber(t *testing.T) {
-	countryCode := int32(33)
-	nationalNumber := uint64(123456)
+	var countryCode int32 = 33
+	var nationalNumber uint64 = 123456
 	possibleNumber := &PhoneNumber{
-		CountryCode:    &countryCode,
-		NationalNumber: &nationalNumber,
+		CountryCode:    countryCode,
+		NationalNumber: nationalNumber,
 	}
 	assert.True(t, IsPossibleShortNumber(possibleNumber))
 
@@ -28,8 +28,8 @@ func TestIsPossibleShortNumber(t *testing.T) {
 
 	nationalNumber = 9
 	impossibleNumber := &PhoneNumber{
-		CountryCode:    &countryCode,
-		NationalNumber: &nationalNumber,
+		CountryCode:    countryCode,
+		NationalNumber: nationalNumber,
 	}
 	assert.False(t, IsPossibleShortNumber(impossibleNumber))
 
@@ -38,18 +38,18 @@ func TestIsPossibleShortNumber(t *testing.T) {
 	countryCode = 44
 	nationalNumber = 11001
 	possibleNumber = &PhoneNumber{
-		CountryCode:    &countryCode,
-		NationalNumber: &nationalNumber,
+		CountryCode:    countryCode,
+		NationalNumber: nationalNumber,
 	}
 	assert.True(t, IsPossibleShortNumber(possibleNumber))
 }
 
 func TestIsValidShortNumber(t *testing.T) {
-	countryCode := int32(33)
-	nationalNumber := uint64(1010)
+	var countryCode int32 = 33
+	var nationalNumber uint64 = 1010
 	validNumber := &PhoneNumber{
-		CountryCode:    &countryCode,
-		NationalNumber: &nationalNumber,
+		CountryCode:    countryCode,
+		NationalNumber: nationalNumber,
 	}
 	assert.True(t, IsValidShortNumber(validNumber))
 
@@ -61,8 +61,8 @@ func TestIsValidShortNumber(t *testing.T) {
 
 	nationalNumber = uint64(123456)
 	invalidNumber := &PhoneNumber{
-		CountryCode:    &countryCode,
-		NationalNumber: &nationalNumber,
+		CountryCode:    countryCode,
+		NationalNumber: nationalNumber,
 	}
 	assert.False(t, IsValidShortNumber(invalidNumber))
 

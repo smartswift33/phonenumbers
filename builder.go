@@ -97,7 +97,7 @@ func validateRE(re string, removeWhitespace bool) string {
 
 func loadTerritoryTagMetadata(regionCode string, territory *TerritoryE, nationalPrefix string) *PhoneMetadata {
 	metadata := &PhoneMetadata{}
-	metadata.Id = sp(regionCode)
+	metadata.Id = regionCode
 
 	if territory.CountryCode != 0 {
 		metadata.CountryCode = ip(territory.CountryCode)
@@ -156,22 +156,22 @@ func loadInternationalFormat(metadata *PhoneMetadata, numberFormatElement *Numbe
 	hasExplicitIntlFormatDefined := false
 
 	if len(intlFormatPattern) > 1 {
-		panic("Invalid number of intlFormat patterns for country: " + metadata.GetId())
+		panic(fmt.Sprintf("Invalid number of intlFormat patterns for country: %s", metadata.GetId()))
 
 	} else if len(intlFormatPattern) == 0 {
 		// Default to use the same as the national pattern if none is defined.
 		intlFormat.merge(nationalFormat)
 	} else {
-		intlFormat.Pattern = sp(numberFormatElement.Pattern)
+		intlFormat.Pattern = numberFormatElement.Pattern
 		setLeadingDigitsPatterns(numberFormatElement, intlFormat)
 		intlFormatPatternValue := intlFormatPattern[0]
 		if intlFormatPatternValue != "NA" {
-			intlFormat.Format = sp(intlFormatPatternValue)
+			intlFormat.Format = intlFormatPatternValue
 		}
 		hasExplicitIntlFormatDefined = true
 	}
 
-	if intlFormat.Format != nil {
+	if len(intlFormat.Format) > 0 {
 		metadata.IntlNumberFormat = append(metadata.IntlNumberFormat, intlFormat)
 	}
 	return hasExplicitIntlFormatDefined
@@ -185,8 +185,8 @@ func loadInternationalFormat(metadata *PhoneMetadata, numberFormatElement *Numbe
 // @VisibleForTesting
 func loadNationalFormat(metadata *PhoneMetadata, numberFormatElement *NumberFormatE, format *NumberFormat) {
 	setLeadingDigitsPatterns(numberFormatElement, format)
-	format.Pattern = sp(validateRE(numberFormatElement.Pattern, false))
-	format.Format = sp(numberFormatElement.Format)
+	format.Pattern = validateRE(numberFormatElement.Pattern, false)
+	format.Format = numberFormatElement.Format
 }
 
 func getDomesticCarrierCodeFormattingRule(carrierCodeFormattingRule string, nationalPrefix string) string {
@@ -575,8 +575,9 @@ type PhoneNumberMetadataE struct {
 }
 
 // <!ELEMENT territory (references?, availableFormats?, generalDesc, noInternationalDialling?,
-//        fixedLine?, mobile?, pager?, tollFree?, premiumRate?,
-//        sharedCost?, personalNumber?, voip?, uan?, voicemail?)>
+//
+//	fixedLine?, mobile?, pager?, tollFree?, premiumRate?,
+//	sharedCost?, personalNumber?, voip?, uan?, voicemail?)>
 type TerritoryE struct {
 	// <!ATTLIST territory id CDATA #REQUIRED>
 	ID string `xml:"id,attr"`

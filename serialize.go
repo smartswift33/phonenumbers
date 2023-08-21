@@ -84,7 +84,7 @@ func loadPrefixMap(data string) (*intStringMap, error) {
 // intStringArrayMap is our map from an int to an array of strings
 // this is used for our timezone and region maps
 type intStringArrayMap struct {
-	Map       map[int][]string
+	Map       map[int32][]string
 	MaxLength int
 }
 
@@ -119,8 +119,8 @@ func loadIntStringArrayMap(data string) (*intStringArrayMap, error) {
 	}
 
 	maxLength := 0
-	mappings := make(map[int][]string, mappingCount)
-	key := 0
+	mappings := make(map[int32][]string, mappingCount)
+	var key int32 = 0
 	for i := 0; i < int(mappingCount); i++ {
 		// first read our diff
 		diff, err := binary.ReadUvarint(reader)
@@ -128,7 +128,7 @@ func loadIntStringArrayMap(data string) (*intStringArrayMap, error) {
 			return nil, err
 		}
 
-		key += int(diff)
+		key += int32(diff)
 
 		// then our values
 		var valueCount uint8
