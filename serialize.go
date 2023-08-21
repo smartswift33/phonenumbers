@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	fmt "fmt"
 	"io/ioutil"
+	"strconv"
 	"strings"
 )
 
@@ -68,7 +69,7 @@ func loadPrefixMap(data string) (*intStringMap, error) {
 
 		mappings[prefix] = values[valueIntern]
 
-		strPrefix := fmt.Sprintf("%d", prefix)
+		strPrefix := strconv.FormatInt(int64(prefix), 10)
 		if len(strPrefix) > maxLength {
 			maxLength = len(strPrefix)
 		}
@@ -147,7 +148,7 @@ func loadIntStringArrayMap(data string) (*intStringArrayMap, error) {
 		}
 		mappings[key] = keyValues
 
-		strPrefix := fmt.Sprintf("%d", key)
+		strPrefix := strconv.FormatInt(int64(key), 10)
 		if len(strPrefix) > maxLength {
 			maxLength = len(strPrefix)
 		}

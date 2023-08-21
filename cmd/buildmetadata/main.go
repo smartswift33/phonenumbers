@@ -313,7 +313,7 @@ func buildPrefixData(build *prefixBuild) {
 	svnExport(build.dir, build.url)
 
 	// get our top level language directories
-	dirs, err := filepath.Glob(fmt.Sprintf("%s/*", build.dir))
+	dirs, err := filepath.Glob(build.dir + "/*")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -116,13 +116,13 @@ var (
 
 	// Limit on the number of blocks separated by punctuation. Uses digitBlockLimit since some
 	// formats use spaces to separate each digit.
-	BLOCK_LIMIT = "{0," + strconv.Itoa(DIGIT_BLOCK_LIMIT) + "}"
+	BLOCK_LIMIT = "{0," + strconv.FormatInt(int64(DIGIT_BLOCK_LIMIT), 10) + "}"
 
 	// A punctuation sequence allowing white space.
 	PUNCTUATION = "[" + VALID_PUNCTUATION + "]" + PUNCTIATION_LIMIT
 
 	// A digits block without punctuation.
-	DIGIT_SEQUENCE = "\\d{1," + strconv.Itoa(DIGIT_BLOCK_LIMIT) + "}"
+	DIGIT_SEQUENCE = "\\d{1," + strconv.FormatInt(int64(DIGIT_BLOCK_LIMIT), 10) + "}"
 )
 
 // Creates a new instance.
